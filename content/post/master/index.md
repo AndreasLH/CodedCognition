@@ -12,7 +12,13 @@ tags:
 weight: 1       # You can add weight to some posts to override the default sorting (date descending)
 ---
 
-hello
+# Hugging face demo
 
-
-2
+<div style="text-align: center;">
+    <iframe
+        src="https://andreaslh-weakly-supervised-3dod.hf.space"
+        frameborder="0"
+        width="90%"
+        height="1400"
+    ></iframe>
+</div>
