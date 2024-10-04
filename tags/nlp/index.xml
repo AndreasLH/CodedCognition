@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>NLP on Coded Cognition // Andreas Lau Hansen</title><link>https://andreaslh.github.io/CodedCognition/tags/nlp/</link><description>Recent content in NLP on Coded Cognition // Andreas Lau Hansen</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 15 Jan 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://andreaslh.github.io/CodedCognition/tags/nlp/index.xml" rel="self" type="application/rss+xml"/><item><title>Ham or spam</title><link>https://andreaslh.github.io/CodedCognition/p/ham-or-spam/</link><pubDate>Wed, 15 Jan 2020 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/ham-or-spam/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/ham-or-spam/cover.png" alt="Featured image of post Ham or spam" />&lt;p>In this small project we made a classification system for emails into spam and regular emails. We used relatively simple methods for converting the text into vectors and classification, however it turned out to be rather effective. Even with these very simple methods it is possible to get an accuracy &amp;gt; 95%. Although this particular problem is not the most difficult, as we are only concerned with a binary classification.&lt;/p>
+&lt;p>The general outline was to build a huge sparse matrix matrix based on the counts of words in each document (email), think something like $n_{docs} \times n_{words}$ of the order $4000 \times 25000$.&lt;/p>
+&lt;p>Using the TF-IDF measure downweighs the longer documents.&lt;/p>
+&lt;p>We get a large matrix that looks something like this.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align: left">&lt;/th>
+&lt;th style="text-align: left">word 1&lt;/th>
+&lt;th style="text-align: left">word 2&lt;/th>
+&lt;th style="text-align: left">&amp;hellip;&lt;/th>
+&lt;th style="text-align: left">&amp;hellip;&lt;/th>
+&lt;th style="text-align: left">word &lt;em>n&lt;/em>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align: left">Document 1&lt;/td>
+&lt;td style="text-align: left">tf-idf(word 1)&lt;/td>
+&lt;td style="text-align: left">tfidf(word 2)&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">tfidf(word &lt;em>n&lt;/em>)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: left">Document 2&lt;/td>
+&lt;td style="text-align: left">tf-idf(word 1)&lt;/td>
+&lt;td style="text-align: left">tfidf(word 2)&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">tfidf(word &lt;em>n&lt;/em>)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: left">Document &lt;em>n&lt;/em>&lt;/td>
+&lt;td style="text-align: left">tf-idf(word 1)&lt;/td>
+&lt;td style="text-align: left">tfidf(word 2)&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">tfidf(word &lt;em>n&lt;/em>)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>It&amp;rsquo;s quite important to represent it as sparse matrix as it is otherwise quite bothersome to such a large matrix. Furthermore, it is largely filled with 0&amp;rsquo;s.&lt;/p>
+&lt;p>Then we can build a classifier based on the naive bayes framework.&lt;/p>
+&lt;p>$$
+P(y \mid x_1, \dots, x_n) \propto P(y) \prod_{i=1}^{n} P(x_i \mid y)
+$$
+$$
+\Downarrow
+$$
+$$
+\hat{y} = \argmax_y P(y) \prod_{i=1}^{n} P(x_i \mid y)
+$$&lt;/p>
+&lt;p>where&lt;/p>
+&lt;p>$$
+P(x_{i}|y) = \hat{\theta_{yi}} = \frac{N_{yi} + \alpha}{N_{y} + \alpha n}
+$$&lt;/p>
+&lt;h2 id="evaluation">Evaluation
+&lt;/h2>&lt;p>We can examine how the different methods stack up against each other&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/ham-or-spam/acc.png" width="60%">&lt;figcaption>
+&lt;h4>Accuracy of each method, including a few other baseline methods some of which use a simpler word vectorisation method, bag-of-words, of counting&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>So, we can build a relatively simple classifier that can obtain a &amp;gt;95% accuracy.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/ham-or-spam/percent.png" width="90%">&lt;figcaption>
+&lt;h4>It&amp;#39;s also interesting to examine which classes are most often classified wrongly and in which way. This figure shows this relationship&lt;/h4>
+&lt;/figcaption>
+&lt;/figure></description></item></channel></rss>

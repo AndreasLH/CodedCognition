@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Signal Processing on Coded Cognition // Andreas Lau Hansen</title><link>https://andreaslh.github.io/CodedCognition/tags/signal-processing/</link><description>Recent content in Signal Processing on Coded Cognition // Andreas Lau Hansen</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 06 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://andreaslh.github.io/CodedCognition/tags/signal-processing/index.xml" rel="self" type="application/rss+xml"/><item><title>Heart rhythm estimation in face videos</title><link>https://andreaslh.github.io/CodedCognition/p/heart-rhythm-estimation-in-face-videos/</link><pubDate>Mon, 06 Jun 2022 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/heart-rhythm-estimation-in-face-videos/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/heart-rhythm-estimation-in-face-videos/bvp2.png" alt="Featured image of post Heart rhythm estimation in face videos" />&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/heart-rhythm-estimation-in-face-videos/bpm.png" width="90%">&lt;figcaption>
+&lt;h4>Processing the data from the BVP sensor&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>Use the excellent &lt;a class="link" href="https://chuoling.github.io/mediapipe/solutions/face_mesh.html" target="_blank" rel="noopener"
+>MediaPipe framework&lt;/a> to find faces in videos. The video below shows how excellent this library is at finding the face.&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/heart-rhythm-estimation-in-face-videos/face_mesh_android_gpu.gif"
+width="300"
+height="564"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/heart-rhythm-estimation-in-face-videos/face_mesh_android_gpu_hu11933790729453692839.gif 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/heart-rhythm-estimation-in-face-videos/face_mesh_android_gpu_hu7924164038056507745.gif 1024w"
+loading="lazy"
+alt="Real time face processing with the Mediapipe frame work"
+class="gallery-image"
+data-flex-grow="53"
+data-flex-basis="127px"
+>&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/heart-rhythm-estimation-in-face-videos/face%20crop.png" width="90%">&lt;figcaption>
+&lt;h4>Extraction of the skin of the face, and finding the relevant keypoints.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure></description></item></channel></rss>

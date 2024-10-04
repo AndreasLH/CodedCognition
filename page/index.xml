@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pages on Coded Cognition // Andreas Lau Hansen</title><link>https://andreaslh.github.io/CodedCognition/page/</link><description>Recent content in Pages on Coded Cognition // Andreas Lau Hansen</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sun, 06 Mar 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://andreaslh.github.io/CodedCognition/page/index.xml" rel="self" type="application/rss+xml"/><item><title>Archives</title><link>https://andreaslh.github.io/CodedCognition/archives/</link><pubDate>Sun, 06 Mar 2022 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/archives/</guid><description/></item><item><title>About me</title><link>https://andreaslh.github.io/CodedCognition/about-me/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/about-me/</guid><description>&lt;p>&lt;em>The bottom of this page contains a short listing of my CV.&lt;/em>&lt;/p>
+&lt;h1 id="dtu">DTU
+&lt;/h1>&lt;p>My journey at DTU started in 2019 when I started on the, at the time, one year old bachelor&amp;rsquo;s degree in Artificial Intelligence and Data. It definitely wasn&amp;rsquo;t the perfect bachelor&amp;rsquo;s experience, many courses were still half done and lecture notes still in creation. It&amp;rsquo;s hard to believe, but back then I barely knew how to do programming. But I quickly caught on, and got to play with some simple AI stuff and it was really fun. Also not gonna some the early semester basic courses like chemistry and physics were just a grind to get through. I dabbled a lot in the math courses, so much that I at one point had a standing joke that I was studying math. Nevertheless, at the point where I reached my Bachelor&amp;rsquo;s project, I found the great supervisor Lars Kai, who not only was a great supervisor but also had a strong mentoring role regarding the project and potentially turning the project into a start-up. I think I learned as much from our talk about how to make a startup as the whole project combined. To this day I still think about if it could be possible to create that start-up, maybe one day!&lt;/p>
+&lt;p>I was really at the Master&amp;rsquo;s in 2022 that I found a particular interest for computer vision, specifically deep learning computer vision methods. Eventually I also went on to do my thesis on a hyperfocused deep learning computer vision topic. Well, it&amp;rsquo;s not so surprising considering that DTU offers many courses in this direction, so it was a natural way for me to go. And by the way also one of my biggest critiques of the course catalogue: the fact there are no courses on language modelling and transformer methods is a huge miss from DTU&amp;rsquo;s side. I personally find it quite dissapointing that I only ever had 2 lectures on transformers in my entire uni time. This lack of courses led me to seek out special courses, which I found to be a great way to get more specialised skills that make me stand out more from other students. Otherwise, I honestly found the master&amp;rsquo;s degree to be extremely underwhelming, considering how good the bachelors was. I had several courses that I did not learn anything, or close to nothing, from because I already it all. On the other hand, I found the thesis period to be one of the best times, although also the period where I worked the hardest - because I liked it so much 😀.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/about-me/degree.png" width="60%">&lt;figcaption>
+&lt;h4>Me and Lukas after finishing our Master&amp;#39;s Thesis at DTU.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;h1 id="joining-copenhagen-medtech">Joining Copenhagen Medtech
+&lt;/h1>&lt;p>At the start of 2024 (the final semester of my education) I decided to join Copenhagen Medtech, a volunteer student organisation making events trying to bring medicine students and technical students (like me!) together. I was personally intrigued after attending an innovation the year before. I was drawn to the organisation because I liked the whole part about collaborating with other students who are quite different from the people who I meet daily. I have previously attended many events of different character, so I find it very appealing to also organise some myself. I think it provides a lot more opportunities than one might superficially consider. Furthermore, I have also gained a lot of new gratifying friends and experience during the process.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/about-me/medtech.png" width="70%">&lt;figcaption>
+&lt;h4>Me and a part of the Medtech team after one of our events at Rigshospitalet&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;h1 id="my-uni-courses">My uni courses
+&lt;/h1>&lt;p>A comprehensive list of the courses I took during University. In order. I put my favourites in &lt;strong>bold&lt;/strong>.&lt;/p>
+&lt;p>Master&amp;rsquo;s degree courses&lt;/p>
+&lt;ul>
+&lt;li>Weakly supervised 3D Object detection (Master&amp;rsquo;s thesis)&lt;/li>
+&lt;li>Multivariate Statistics&lt;/li>
+&lt;li>Cognitive Modelling&lt;/li>
+&lt;li>Machine learning for signal processing&lt;/li>
+&lt;li>High-performance computing&lt;/li>
+&lt;li>&lt;strong>Advanced Deep Learning in Computer Vision&lt;/strong>&lt;/li>
+&lt;li>Algorithms for Massive Data Sets&lt;/li>
+&lt;li>Computer Vision&lt;/li>
+&lt;li>&lt;strong>Deep learning in computer vision&lt;/strong>&lt;/li>
+&lt;li>Computational data analysis&lt;/li>
+&lt;li>Innovation in Engineering&lt;/li>
+&lt;li>&lt;strong>Responsible AI&lt;/strong>&lt;/li>
+&lt;li>Algorithms and Data Structures 2&lt;/li>
+&lt;li>Machine learning operations&lt;/li>
+&lt;li>Computer Graphics&lt;/li>
+&lt;li>Optimization and data fitting&lt;/li>
+&lt;li>Computational tools for data science&lt;/li>
+&lt;li>Deep generative modelling&lt;/li>
+&lt;/ul>
+&lt;p>Bachelor&amp;rsquo;s degree courses&lt;/p>
+&lt;ul>
+&lt;li>Advanced linear algebra&lt;/li>
+&lt;li>Symbolic artificial intelligence&lt;/li>
+&lt;li>&lt;strong>Computational social science&lt;/strong>&lt;/li>
+&lt;li>Detection of physiological signals in video (Bachelor&amp;rsquo;s thesis)&lt;/li>
+&lt;li>Introduction to partial differential equations&lt;/li>
+&lt;li>Deep learning&lt;/li>
+&lt;li>Introduction to numerical algorithms&lt;/li>
+&lt;li>Mathematical software programming&lt;/li>
+&lt;li>Theory of science in engineering&lt;/li>
+&lt;li>Advanced Engineering Mathematics 2&lt;/li>
+&lt;li>Algorithms and Data Structures 1&lt;/li>
+&lt;li>Active machine learning and agency&lt;/li>
+&lt;li>Introduction to reinforcement learning and control&lt;/li>
+&lt;li>Project work - Bachelor of Artificial Intelligence and Data&lt;/li>
+&lt;li>Image analysis&lt;/li>
+&lt;li>Discrete Mathematics&lt;/li>
+&lt;li>Probability Theory&lt;/li>
+&lt;li>Project in statistical evaluation for Artificial Intelligence and Data&lt;/li>
+&lt;li>Introduction to machine learning and data mining&lt;/li>
+&lt;li>UX design prototyping&lt;/li>
+&lt;li>Fundamental Chemistry in English&lt;/li>
+&lt;li>Advanced engineering mathematics 1&lt;/li>
+&lt;li>Introduction to mathematical statistics&lt;/li>
+&lt;li>&lt;strong>Signals and data&lt;/strong>&lt;/li>
+&lt;li>Artificial intelligence and human cognition&lt;/li>
+&lt;li>Physics I&lt;/li>
+&lt;li>Introduction to intelligent systems&lt;/li>
+&lt;li>Introduction to programming and data processing&lt;/li>
+&lt;/ul>
+&lt;!--
+To use this feature, add `links` section to frontmatter.
+This page's frontmatter:
+```yaml
+links:
+- title: GitHub
+description: GitHub is the world's largest software development platform.
+website: https://github.com
+image: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+- title: TypeScript
+description: TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.
+website: https://www.typescriptlang.org
+image: ts-logo-128.jpg
+```
+`image` field accepts both local and external images. --></description></item><item><title>Search</title><link>https://andreaslh.github.io/CodedCognition/search/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/search/</guid><description/></item></channel></rss>

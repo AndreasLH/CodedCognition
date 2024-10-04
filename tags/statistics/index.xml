@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Statistics on Coded Cognition // Andreas Lau Hansen</title><link>https://andreaslh.github.io/CodedCognition/tags/statistics/</link><description>Recent content in Statistics on Coded Cognition // Andreas Lau Hansen</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 17 Sep 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://andreaslh.github.io/CodedCognition/tags/statistics/index.xml" rel="self" type="application/rss+xml"/><item><title>Object recognition at different angles</title><link>https://andreaslh.github.io/CodedCognition/p/object-recognition-at-different-angles/</link><pubDate>Tue, 17 Sep 2019 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/object-recognition-at-different-angles/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/object-recognition-at-different-angles/angle%20experiment.png" alt="Featured image of post Object recognition at different angles" />&lt;p>This was the very first time I played around with an image classifier, just a week after starting my Bachelor&amp;rsquo;s degree in Artificial intelligence and Data. Back then I had no idea how the model actually worked, but accepted is as a black box.&lt;/p>
+&lt;p>Basically the experiment was to use an out-of-the box Resnet50 model to recognise a phone at different angles. Another purpose of the experiment was to get familiar with means and confidence intervals.&lt;/p>
+&lt;p>This was gathered in a table&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align: right">Angle (deg.)&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: right">Avg. (%)&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align: right">90&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">80&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">70&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">60&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">50&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">40&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">30&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">20&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">10&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: right">33.33&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">0&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: right">16.7&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>We collected these results and found an average accuracy of 85% with a confidence interval [80.6%; 89.4%].&lt;/p>
+&lt;p>All this was as simple as the following code and some boilerplate to load the image&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">model&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">resnet50&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">ResNet50&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">weights&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;imagenet&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># load the image&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># ....&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">processed_image&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">resnet50&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">preprocess_input&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">expand_dims&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">frame&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">axis&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">predictions&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">model&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">predict&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">processed_image&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">label&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">resnet50&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">decode_predictions&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">predictions&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item></channel></rss>

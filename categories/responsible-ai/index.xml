@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Responsible AI on Coded Cognition // Andreas Lau Hansen</title><link>https://andreaslh.github.io/CodedCognition/categories/responsible-ai/</link><description>Recent content in Responsible AI on Coded Cognition // Andreas Lau Hansen</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 05 Apr 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://andreaslh.github.io/CodedCognition/categories/responsible-ai/index.xml" rel="self" type="application/rss+xml"/><item><title>Explainable AI using Saliency maps and Proto-PNet</title><link>https://andreaslh.github.io/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/</link><pubDate>Wed, 05 Apr 2023 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/image.png" alt="Featured image of post Explainable AI using Saliency maps and Proto-PNet" />&lt;p>Class Activation mappings (CAM) based on the output of a simple ResNet18 model
+&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/image.png"
+width="1528"
+height="578"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/image_hu17400886873737781685.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/image_hu10754609155450992219.png 1024w"
+loading="lazy"
+alt="Class activation mappings"
+class="gallery-image"
+data-flex-grow="264"
+data-flex-basis="634px"
+>&lt;/p>
+&lt;p>Prototype based network. Works on a this-looks-like-that principle, i.e. it looks in other images with similar features to explain why it classifies image to certain classes.
+&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/protop.png"
+width="1667"
+height="640"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/protop_hu2410043829473553825.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/protop_hu16319945186100744479.png 1024w"
+loading="lazy"
+alt="Proto-PNet model architecture"
+class="gallery-image"
+data-flex-grow="260"
+data-flex-basis="625px"
+>&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/ProtoP_bboxes.png"
+width="1890"
+height="963"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/ProtoP_bboxes_hu8493024653800331887.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/ProtoP_bboxes_hu2940373101051714152.png 1024w"
+loading="lazy"
+alt="Explanations from the Proto-PNet model"
+class="gallery-image"
+data-flex-grow="196"
+data-flex-basis="471px"
+>&lt;/p></description></item></channel></rss>

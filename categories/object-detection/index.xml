@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Object Detection on Coded Cognition // Andreas Lau Hansen</title><link>https://andreaslh.github.io/CodedCognition/categories/object-detection/</link><description>Recent content in Object Detection on Coded Cognition // Andreas Lau Hansen</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 21 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://andreaslh.github.io/CodedCognition/categories/object-detection/index.xml" rel="self" type="application/rss+xml"/><item><title>Trash Detection</title><link>https://andreaslh.github.io/CodedCognition/p/trash-detection/</link><pubDate>Wed, 21 Jun 2023 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/trash-detection/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/trash-detection/out.png" alt="Featured image of post Trash Detection" />&lt;h2 id="architecture">Architecture
+&lt;/h2>&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/test_val.png"
+width="1033"
+height="973"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/test_val_hu5859902815370961169.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/test_val_hu2687572833240131205.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="106"
+data-flex-basis="254px"
+>&lt;/p>
+&lt;p>Using the trusty ResNet18 backbone&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/resnet.png"
+width="652"
+height="368"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/resnet_hu467421071958372593.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/resnet_hu13030596310864781748.png 1024w"
+loading="lazy"
+alt="A Resnet building block"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="425px"
+>&lt;/p>
+&lt;h2 id="results">Results
+&lt;/h2>&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/preds.png"
+width="2280"
+height="835"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/preds_hu3329243334120617439.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/preds_hu1473284039498439325.png 1024w"
+loading="lazy"
+alt="Handful of selected scenarios of predictions"
+class="gallery-image"
+data-flex-grow="273"
+data-flex-basis="655px"
+>&lt;/p></description></item><item><title>GAN Latent space</title><link>https://andreaslh.github.io/CodedCognition/p/gan-latent-space/</link><pubDate>Fri, 16 Jun 2023 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/gan-latent-space/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/gan-latent-space/directions.png" alt="Featured image of post GAN Latent space" /></description></item></channel></rss>

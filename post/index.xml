@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Coded Cognition // Andreas Lau Hansen</title><link>https://andreaslh.github.io/CodedCognition/post/</link><description>Recent content in Posts on Coded Cognition // Andreas Lau Hansen</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 05 Aug 2024 12:00:00 +0000</lastBuildDate><atom:link href="https://andreaslh.github.io/CodedCognition/post/index.xml" rel="self" type="application/rss+xml"/><item><title>Weakly Supervised 3D Object Detection</title><link>https://andreaslh.github.io/CodedCognition/p/master/</link><pubDate>Mon, 05 Aug 2024 12:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/master/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/master/preds.png" alt="Featured image of post Weakly Supervised 3D Object Detection" />&lt;h1 id="introduction">Introduction
+&lt;/h1>&lt;p>2D object detection has for some time been quite successful put simply it can tell where in the image an object sits, which has many use cases. However to place an object in physical dimensions 3D object detection is needed. The figure below shows the natural extension.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/motivation.png" width="80%">&lt;figcaption>
+&lt;h4>Why 3D object detection is more useful. The squares in the rightmost figure are 1mx1m in size.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;h2 id="data-annotation-is-difficult">Data annotation is difficult
+&lt;/h2>&lt;p>However, one of the biggest challenges with 3D object detection is that large datasets are not widely available. This figure quite nicely illustrates one the reasons why that is - the data rougly takes 11x more time to annotate, and that is not counting how much more difficult it is to collect the data. Collection typically requires complicated setups with depth sensing cameras or whole room scanning.
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/annotation.png" width="80%">&lt;figcaption>
+&lt;h4>Annotation time motivation.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;p>This begs the question:
+&lt;strong>How to make a 3D object detection model using only 2D annotation boxes&lt;/strong>&lt;/p>
+&lt;p>So we&amp;rsquo;re not interested in making the best possible 3D object detector, but one that is efficient with its use of data. That is why we call it weakly supervised 3D object detection.&lt;/p>
+&lt;h2 id="the-problem-is-more-difficult">The problem is more difficult
+&lt;/h2>&lt;p>This project only concerns using a single camera, so-called monocular object detection. This makes this model much more accessible, as anyone with a simple camera for example a phone can use the model to generate predictions. An issue with this problem is that it makes the problem much more difficult, to determine the physical location of an object one requires at least 2 distinct view points. Without this, you have to resort to estimation.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/line.png" width="50%">&lt;figcaption>
+&lt;h4>A point in an image, corresponds to an infinite number of points in 3D.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>The figure shows how estimating the depth is the biggest challenge, because a large object far away visually appears the same size as a smaller object close by.&lt;/p>
+&lt;h1 id="approach-weak-cube-r-cnn">Approach: &amp;ldquo;Weak Cube R-CNN&amp;rdquo;
+&lt;/h1>&lt;p>We take heavy inspiration from another model &lt;a class="link" href="https://arxiv.org/abs/2207.10660" target="_blank" rel="noopener"
+>Cube R-CNN&lt;/a>, but remove all the components related to its 3D detection capability. As such what remains is essentially a Faster R-CNN model. Our model predicts 3D bounding boxes from the 2D predicted bounding boxes.&lt;/p>
+&lt;p>The crucial component is how to introduce depth sensing, since we do not have the 3D annotations anymore. To this end we use a depth estimation &amp;ldquo;Depth Anything&amp;rdquo; model tuned for metric depth estimation (estimating depth in meters), with this model you can effectively get a pseudo ground truth of the depth of the scene. The figure below shows how this might look for an image.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/depth_map.png" width="80%">&lt;figcaption>
+&lt;h4>Depth map.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>Interestingly, one can also interpret the depth map as a point-cloud by transforming it with simple math. This proves quite useful, because one can use it for other downstream tasks.
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/point_cloud_floor.png" width="60%">&lt;figcaption>
+&lt;h4>Point cloud generated from a depth map.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;p>When you have the point-cloud it is possible to estimate the ground plane. This is useful because the rotation, along with the depth, is one of the most important characteristics of getting high accuracy. Additionally, it utilises the frame of reference that is present in scenes. However, running a ground estimation algorithm on the point cloud directly is highly unstable, as there are typically other more dominant planes in a scene, like the walls. We overcome this by using a combination of the GroundingDINO and Segment Anything methods (middle image), this effectively filters the ground. Now you can run a simple plane-estimation RANSAC algorithm on the filtered point cloud, this turns out to be quite robust.
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/rotation.png" width="90%">&lt;figcaption>
+&lt;h4>How you can obtain a ground normal from the estimated point cloud.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;p>Based on all of these properties obtained from the scene, we build a variety of loss functions to optimise the model. A large overview of the whole model is shown.
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/model_arch-loss_vertical-3.svg" width="95%">&lt;figcaption>
+&lt;h4>Overview of the whole model&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;p>In total the whole optimisation objective for the 3D part of the model becomes:
+$$
+L_{3D} = L_{GIoU} + L_z + L_{dim} + L_{range} + L_{normal} + L_{pose}
+$$&lt;/p>
+&lt;p>So we have something for the positioning (first 2), the dimension (middle 2), and the rotation (last 2).
+These losses are clearly the most important part of the model. Additionally, each term is regularised by a $\lambda$.&lt;/p>
+&lt;h1 id="results">Results
+&lt;/h1>&lt;p>For reference to our method we also intially developed a &amp;ldquo;proposal method&amp;rdquo; based on the idea of proposing many cubes and selecting the best ones. The ideas generated when developing this method were carried over to our learnable &lt;em>Weak Cube R-CNN&lt;/em> method.&lt;/p>
+&lt;h2 id="metrics">Metrics
+&lt;/h2>&lt;p>The notable thing to report on the developed method, is that it achieves higher accuracy than a corresponding fully supervised but annotation time-equalised model.
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/result.png" width="90%">&lt;figcaption>
+&lt;h4>Results on the chosen metric Average precision 2D and 3D&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;p>The AP numbers might not look that impressive, but the following figure puts them into context. The AP3D metric is very punishing when just slightly off.
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/3diou.png" width="90%">&lt;figcaption>
+&lt;h4>Achieving a high 3D IoU is really hard.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;h2 id="pictures">Pictures
+&lt;/h2>&lt;p>What we are here for!!
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/weak.png" width="95%">&lt;figcaption>
+&lt;h4>Results from the Weak-Cube R-CNN method&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/time-eq.png" width="95%">&lt;figcaption>
+&lt;h4>Results from the Annotation time equalised Cube R-CNN method&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/preds.png" width="95%">&lt;figcaption>
+&lt;h4>Results from the standard Cube R-CNN method&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;h3 id="breaking-the-model">Breaking the model
+&lt;/h3>&lt;p>Just trying random stuff, that is really out of domain for the model to see what happens.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/fun.png" width="95%">&lt;figcaption>
+&lt;h4>Left: The model predicting wrongly on illusions. Right: When you provide a fake depth map of the same depth, it still looks correct from the front&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;h1 id="huggingface-demo">Huggingface demo
+&lt;/h1>&lt;p>If you want to try the model yourself, we are hosting a demo version on &lt;a class="link" href="https://huggingface.co/spaces/AndreasLH/Weakly-Supervised-3DOD" target="_blank" rel="noopener"
+>Huggingface&lt;/a>.&lt;/p>
+&lt;div style="text-align: center;">
+&lt;iframe
+src="https://andreaslh-weakly-supervised-3dod.hf.space"
+frameborder="0"
+width="90%"
+height="1400"
+>&lt;/iframe>
+&lt;/div></description></item><item><title>Image to recipe retrieval</title><link>https://andreaslh.github.io/CodedCognition/p/hello-world/</link><pubDate>Sun, 26 Nov 2023 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/hello-world/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/hello-world/cover2.png" alt="Featured image of post Image to recipe retrieval" />&lt;h1 id="motivation">Motivation
+&lt;/h1>&lt;p>I realised midways during this project that we had essentially just recreated the CLIP model.&lt;/p>
+&lt;h1 id="data">Data
+&lt;/h1>&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/data.png"
+width="1713"
+height="546"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/data_hu18030225312439565727.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/data_hu3721719520517867076.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="313"
+data-flex-basis="752px"
+>&lt;/p>
+&lt;h2 id="contrastive-learning">Contrastive learning
+&lt;/h2>&lt;h3 id="math">Math
+&lt;/h3>&lt;p>$$
+L_{bi} (a^{n=i}, b^{n=i}, b^{b\neq i}, a^{n\neq i}) = \frac{1}{B} \sum_{j=1}^B L^\prime_{bi}(i,j)\delta(i,j)
+$$&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/contrast.png"
+width="900"
+height="442"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/contrast_hu4121234433444749986.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/contrast_hu3149316029614551298.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="203"
+data-flex-basis="488px"
+> &lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/PCA.png"
+width="1015"
+height="829"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/PCA_hu274456097910932506.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/PCA_hu5569010005091693709.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="122"
+data-flex-basis="293px"
+>&lt;/p>
+&lt;h1 id="model">Model
+&lt;/h1>&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/model.png"
+width="1370"
+height="587"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/model_hu1529365347401631037.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/model_hu11883857552261529226.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="233"
+data-flex-basis="560px"
+>&lt;/p>
+&lt;h1 id="results">Results
+&lt;/h1>&lt;p>We can go both forwards and backwards between images and text.&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/results.png"
+width="1281"
+height="1121"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/results_hu12657805338290030343.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/results_hu3945010227499800399.png 1024w"
+loading="lazy"
+alt="Images and recipies"
+class="gallery-image"
+data-flex-grow="114"
+data-flex-basis="274px"
+>&lt;/p>
+&lt;h2 id="out-of-distribution-image">Out of distribution image
+&lt;/h2>&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/OOD.png"
+width="1547"
+height="159"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/OOD_hu6967952611363395337.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/OOD_hu5742916082539157431.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="972"
+data-flex-basis="2335px"
+>&lt;/p></description></item><item><title>Efficient use of computation</title><link>https://andreaslh.github.io/CodedCognition/p/efficient-use-of-computation/</link><pubDate>Mon, 15 Jan 2024 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/efficient-use-of-computation/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/efficient-use-of-computation/cpu.png" alt="Featured image of post Efficient use of computation" />&lt;h2 id="cpu">CPU
+&lt;/h2>&lt;p>Efficient computation and hardware utilisation underpins most of the methods used in deep learning learning applications.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/efficient-use-of-computation/cpu.png" width="60%">&lt;figcaption>
+&lt;h4>Different implementations of matrix multiplication on cpu&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/efficient-use-of-computation/mkn.png" width="60%">&lt;figcaption>
+&lt;h4>Why it is faster to access in the mkn pattern&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;h3 id="making-things-faster-multithreading">Making things faster: multithreading
+&lt;/h3>&lt;p>For this, we are chaning the problem to model the heat spread in a room&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/efficient-use-of-computation/room.png" width="60%">&lt;figcaption>
+&lt;h4>Room shown at different times&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>Now we can utilise all the cores in the machine to make the simulation go a lot faster.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/efficient-use-of-computation/jacobi.png" width="60%">&lt;figcaption>
+&lt;h4>Performance when using multiple cores, measured in Mega lattice updates/s&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;h2 id="making-things-even-faster-using-a-gpu">Making things even faster: using a gpu
+&lt;/h2>&lt;p>The idea of using blocking is to allow each thread to work on more than one element of the C matrix before being released. This might improve performance, because the overhead of assigning new threads to calculate each element is higher than assigning new work to each thread.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/efficient-use-of-computation/gpu.png" width="60%">&lt;figcaption>
+&lt;h4>Different implementations of matrix multiplication on cpu&lt;/h4>
+&lt;/figcaption>
+&lt;/figure></description></item><item><title>Linear Encoding of faces</title><link>https://andreaslh.github.io/CodedCognition/p/linear-encoding-of-faces/</link><pubDate>Sun, 15 Oct 2023 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/linear-encoding-of-faces/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/linear-encoding-of-faces/generated.png" alt="Featured image of post Linear Encoding of faces" /></description></item><item><title>Trash Detection</title><link>https://andreaslh.github.io/CodedCognition/p/trash-detection/</link><pubDate>Wed, 21 Jun 2023 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/trash-detection/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/trash-detection/out.png" alt="Featured image of post Trash Detection" />&lt;h2 id="architecture">Architecture
+&lt;/h2>&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/test_val.png"
+width="1033"
+height="973"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/test_val_hu5859902815370961169.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/test_val_hu2687572833240131205.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="106"
+data-flex-basis="254px"
+>&lt;/p>
+&lt;p>Using the trusty ResNet18 backbone&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/resnet.png"
+width="652"
+height="368"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/resnet_hu467421071958372593.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/resnet_hu13030596310864781748.png 1024w"
+loading="lazy"
+alt="A Resnet building block"
+class="gallery-image"
+data-flex-grow="177"
+data-flex-basis="425px"
+>&lt;/p>
+&lt;h2 id="results">Results
+&lt;/h2>&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/preds.png"
+width="2280"
+height="835"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/preds_hu3329243334120617439.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/trash-detection/preds_hu1473284039498439325.png 1024w"
+loading="lazy"
+alt="Handful of selected scenarios of predictions"
+class="gallery-image"
+data-flex-grow="273"
+data-flex-basis="655px"
+>&lt;/p></description></item><item><title>GAN Latent space</title><link>https://andreaslh.github.io/CodedCognition/p/gan-latent-space/</link><pubDate>Fri, 16 Jun 2023 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/gan-latent-space/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/gan-latent-space/directions.png" alt="Featured image of post GAN Latent space" /></description></item><item><title>Semantic Image Segmentation</title><link>https://andreaslh.github.io/CodedCognition/p/semantic-image-segmentation/</link><pubDate>Mon, 12 Jun 2023 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/semantic-image-segmentation/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/semantic-image-segmentation/preds.png" alt="Featured image of post Semantic Image Segmentation" />&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/semantic-image-segmentation/arch1.png"
+width="1827"
+height="376"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/semantic-image-segmentation/arch1_hu10741618325233932625.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/semantic-image-segmentation/arch1_hu3299632180106687962.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="485"
+data-flex-basis="1166px"
+>&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/semantic-image-segmentation/arch2.png"
+width="1523"
+height="588"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/semantic-image-segmentation/arch2_hu4845154230956705697.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/semantic-image-segmentation/arch2_hu14711047779079016820.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="259"
+data-flex-basis="621px"
+>&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/semantic-image-segmentation/preds.png"
+width="1474"
+height="514"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/semantic-image-segmentation/preds_hu11455269285606557195.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/semantic-image-segmentation/preds_hu3836467802301263979.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="286"
+data-flex-basis="688px"
+>&lt;/p></description></item><item><title>Explainable AI using Saliency maps and Proto-PNet</title><link>https://andreaslh.github.io/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/</link><pubDate>Wed, 05 Apr 2023 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/image.png" alt="Featured image of post Explainable AI using Saliency maps and Proto-PNet" />&lt;p>Class Activation mappings (CAM) based on the output of a simple ResNet18 model
+&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/image.png"
+width="1528"
+height="578"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/image_hu17400886873737781685.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/image_hu10754609155450992219.png 1024w"
+loading="lazy"
+alt="Class activation mappings"
+class="gallery-image"
+data-flex-grow="264"
+data-flex-basis="634px"
+>&lt;/p>
+&lt;p>Prototype based network. Works on a this-looks-like-that principle, i.e. it looks in other images with similar features to explain why it classifies image to certain classes.
+&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/protop.png"
+width="1667"
+height="640"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/protop_hu2410043829473553825.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/protop_hu16319945186100744479.png 1024w"
+loading="lazy"
+alt="Proto-PNet model architecture"
+class="gallery-image"
+data-flex-grow="260"
+data-flex-basis="625px"
+>&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/ProtoP_bboxes.png"
+width="1890"
+height="963"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/ProtoP_bboxes_hu8493024653800331887.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/explainable-ai-using-saliency-maps-and-proto-pnet/ProtoP_bboxes_hu2940373101051714152.png 1024w"
+loading="lazy"
+alt="Explanations from the Proto-PNet model"
+class="gallery-image"
+data-flex-grow="196"
+data-flex-basis="471px"
+>&lt;/p></description></item><item><title>MLOps for Butterfly image generation</title><link>https://andreaslh.github.io/CodedCognition/p/mlops-for-butterfly-image-generation/</link><pubDate>Thu, 19 Jan 2023 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/mlops-for-butterfly-image-generation/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/mlops-for-butterfly-image-generation/api_generations.png" alt="Featured image of post MLOps for Butterfly image generation" />&lt;p>This was mostly about learning the whole MLOps pipeline, to train, push monitor and so on, the machine learning life cycle.&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/mlops-for-butterfly-image-generation/system_b_transparent.png"
+width="1322"
+height="589"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/mlops-for-butterfly-image-generation/system_b_transparent_hu14645926661266403856.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/mlops-for-butterfly-image-generation/system_b_transparent_hu16085903344503391603.png 1024w"
+loading="lazy"
+alt="The pipeline"
+class="gallery-image"
+data-flex-grow="224"
+data-flex-basis="538px"
+>&lt;/p></description></item><item><title>Heart rhythm estimation in face videos</title><link>https://andreaslh.github.io/CodedCognition/p/heart-rhythm-estimation-in-face-videos/</link><pubDate>Mon, 06 Jun 2022 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/heart-rhythm-estimation-in-face-videos/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/heart-rhythm-estimation-in-face-videos/bvp2.png" alt="Featured image of post Heart rhythm estimation in face videos" />&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/heart-rhythm-estimation-in-face-videos/bpm.png" width="90%">&lt;figcaption>
+&lt;h4>Processing the data from the BVP sensor&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>Use the excellent &lt;a class="link" href="https://chuoling.github.io/mediapipe/solutions/face_mesh.html" target="_blank" rel="noopener"
+>MediaPipe framework&lt;/a> to find faces in videos. The video below shows how excellent this library is at finding the face.&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/heart-rhythm-estimation-in-face-videos/face_mesh_android_gpu.gif"
+width="300"
+height="564"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/heart-rhythm-estimation-in-face-videos/face_mesh_android_gpu_hu11933790729453692839.gif 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/heart-rhythm-estimation-in-face-videos/face_mesh_android_gpu_hu7924164038056507745.gif 1024w"
+loading="lazy"
+alt="Real time face processing with the Mediapipe frame work"
+class="gallery-image"
+data-flex-grow="53"
+data-flex-basis="127px"
+>&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/heart-rhythm-estimation-in-face-videos/face%20crop.png" width="90%">&lt;figcaption>
+&lt;h4>Extraction of the skin of the face, and finding the relevant keypoints.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure></description></item><item><title>Multiagent planning</title><link>https://andreaslh.github.io/CodedCognition/p/multiagent-planning/</link><pubDate>Sun, 15 May 2022 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/multiagent-planning/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/multiagent-planning/pepper.png" alt="Featured image of post Multiagent planning" />&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/multiagent-planning/agent.png"
+width="1181"
+height="568"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/multiagent-planning/agent_hu8834531095826424617.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/multiagent-planning/agent_hu16250242531395457281.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="207"
+data-flex-basis="499px"
+>&lt;/p></description></item><item><title>The social network of Hip-Hop artists</title><link>https://andreaslh.github.io/CodedCognition/p/the-social-network-of-hip-hop-artists/</link><pubDate>Tue, 10 May 2022 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/the-social-network-of-hip-hop-artists/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/the-social-network-of-hip-hop-artists/community.png" alt="Featured image of post The social network of Hip-Hop artists" />&lt;p>Scraping wikipedia&lt;/p>
+&lt;p>We made this as its &lt;a class="link" href="https://rreezn.github.io/Social_Artists/" target="_blank" rel="noopener"
+>own separate website&lt;/a>.&lt;/p></description></item><item><title>Image colourisation</title><link>https://andreaslh.github.io/CodedCognition/p/image-colourisation/</link><pubDate>Fri, 10 Dec 2021 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/image-colourisation/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/image-colourisation/preds.png" alt="Featured image of post Image colourisation" /></description></item><item><title>Jewellery recommendation for e-commerce</title><link>https://andreaslh.github.io/CodedCognition/p/jewellery-recommendation-for-e-commerce/</link><pubDate>Sat, 12 Jun 2021 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/jewellery-recommendation-for-e-commerce/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/jewellery-recommendation-for-e-commerce/VAE.png" alt="Featured image of post Jewellery recommendation for e-commerce" /></description></item><item><title>Route Planning for self driving cars</title><link>https://andreaslh.github.io/CodedCognition/p/route-planning-for-self-driving-cars/</link><pubDate>Fri, 07 May 2021 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/route-planning-for-self-driving-cars/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/route-planning-for-self-driving-cars/car.png" alt="Featured image of post Route Planning for self driving cars" />&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/route-planning-for-self-driving-cars/car.png" width="60%">&lt;figcaption>
+&lt;h4>Snapshot of the environment, we are driving the green car&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>Model the environment as a time to collision matrix.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/route-planning-for-self-driving-cars/TTC.png" width="60%">&lt;figcaption>
+&lt;h4>Time to collision (TTC) matrix&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>5 available actions A(s), which are: {0: ‘LANE_LEFT’, 1: ‘IDLE’, 2: ‘LANE_RIGHT’, 3: ‘FASTER’, 4: ‘SLOWER’}&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/route-planning-for-self-driving-cars/car%20driving.gif"
+width="864"
+height="504"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/route-planning-for-self-driving-cars/car%20driving_hu2102085749756944050.gif 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/route-planning-for-self-driving-cars/car%20driving_hu9572495506577776478.gif 1024w"
+loading="lazy"
+alt="Value function when the car is driving"
+class="gallery-image"
+data-flex-grow="171"
+data-flex-basis="411px"
+>&lt;/p></description></item><item><title>Active learning</title><link>https://andreaslh.github.io/CodedCognition/p/active-learning/</link><pubDate>Thu, 08 Apr 2021 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/active-learning/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/active-learning/image.png" alt="Featured image of post Active learning" />&lt;p>The Fashion-MNIST data-set is used in this project. It is a collection of Zalando’s article images consisting of 60.000 training points and 10.000 test points. The data-set is balanced perfectly so that each class has 6.000 training and 1.000 test points. Each data-point resembles a grey-scale image of size 28x28 pixels, with a label indicating which class it belongs to (a total of 10 classes).&lt;/p>
+&lt;p>We used this dataset as it is sufficiently simple but still complicated enough that a model won&amp;rsquo;t get 100% accuracy&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/active-learning/classes.png"
+width="875"
+height="466"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/active-learning/classes_hu6792714811592606459.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/active-learning/classes_hu5711885332270076008.png 1024w"
+loading="lazy"
+alt="Examples of the different classes in the dataset"
+class="gallery-image"
+data-flex-grow="187"
+data-flex-basis="450px"
+>&lt;/p>
+&lt;p>Different uncertainy sampling strategies&lt;/p>
+&lt;p>Least confident&lt;/p>
+&lt;p>$$
+x^{\ast} = \argmax_{x \in U} 1 − p_{\theta} \left( y_{(1)}|x \right)
+$$
+maximum margin
+$$
+x^{\ast} = \argmax_{x \in U} p_{\theta} \left( y_{(1)}|x \right) − p_{\theta} \left( y_{(2)}|x \right)
+$$
+entropy
+$$
+x^{\ast} = \argmax_{x \in U} -\sum_{y-\in Y} p_{\theta} \left( y|x \right) \log p_\theta (y|x)
+$$&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/active-learning/image.png"
+width="1637"
+height="769"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/active-learning/image_hu669928947534638765.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/active-learning/image_hu7729084810999419857.png 1024w"
+loading="lazy"
+alt="Accuracy as a function of the number of training images, one image is added in each iteration."
+class="gallery-image"
+data-flex-grow="212"
+data-flex-basis="510px"
+>&lt;/p></description></item><item><title>Diabetes Assistant</title><link>https://andreaslh.github.io/CodedCognition/p/diabetes-assistant/</link><pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/diabetes-assistant/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/diabetes-assistant/cover.png" alt="Featured image of post Diabetes Assistant" />&lt;p>We made a phone app and a watch app, among some other things. The watch app is below.&lt;/p>
+&lt;p>You can try them out and click around.&lt;/p>
+&lt;p align="center">
+&lt;iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="80%" height="1000" src="https://embed.figma.com/proto/Nm8qEaKpDylUk48nH19LpG/Diabetes-For-You?node-id=325-2766&amp;node-type=canvas&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;page-id=325%3A1320&amp;embed-host=share" allowfullscreen>&lt;/iframe>
+&lt;/p>
+The watch app
+&lt;p align="center">
+&lt;iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="50%" height="450" src="https://embed.figma.com/proto/Nm8qEaKpDylUk48nH19LpG/Diabetes-For-You?node-id=41-340&amp;node-type=canvas&amp;scaling=scale-down&amp;content-scaling=fixed&amp;page-id=41%3A124&amp;embed-host=share" allowfullscreen>&lt;/iframe>
+&lt;/p></description></item><item><title>Text classification by word embeddings</title><link>https://andreaslh.github.io/CodedCognition/p/text-classification-by-word-embeddings/</link><pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/text-classification-by-word-embeddings/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/text-classification-by-word-embeddings/image.png" alt="Featured image of post Text classification by word embeddings" />&lt;p>fastText and GloVe embedding methods&lt;/p>
+&lt;p>PCA for visualisation. The first of many times I have used PCA.&lt;/p></description></item><item><title>Ham or spam</title><link>https://andreaslh.github.io/CodedCognition/p/ham-or-spam/</link><pubDate>Wed, 15 Jan 2020 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/ham-or-spam/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/ham-or-spam/cover.png" alt="Featured image of post Ham or spam" />&lt;p>In this small project we made a classification system for emails into spam and regular emails. We used relatively simple methods for converting the text into vectors and classification, however it turned out to be rather effective. Even with these very simple methods it is possible to get an accuracy &amp;gt; 95%. Although this particular problem is not the most difficult, as we are only concerned with a binary classification.&lt;/p>
+&lt;p>The general outline was to build a huge sparse matrix matrix based on the counts of words in each document (email), think something like $n_{docs} \times n_{words}$ of the order $4000 \times 25000$.&lt;/p>
+&lt;p>Using the TF-IDF measure downweighs the longer documents.&lt;/p>
+&lt;p>We get a large matrix that looks something like this.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align: left">&lt;/th>
+&lt;th style="text-align: left">word 1&lt;/th>
+&lt;th style="text-align: left">word 2&lt;/th>
+&lt;th style="text-align: left">&amp;hellip;&lt;/th>
+&lt;th style="text-align: left">&amp;hellip;&lt;/th>
+&lt;th style="text-align: left">word &lt;em>n&lt;/em>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align: left">Document 1&lt;/td>
+&lt;td style="text-align: left">tf-idf(word 1)&lt;/td>
+&lt;td style="text-align: left">tfidf(word 2)&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">tfidf(word &lt;em>n&lt;/em>)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: left">Document 2&lt;/td>
+&lt;td style="text-align: left">tf-idf(word 1)&lt;/td>
+&lt;td style="text-align: left">tfidf(word 2)&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">tfidf(word &lt;em>n&lt;/em>)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: left">Document &lt;em>n&lt;/em>&lt;/td>
+&lt;td style="text-align: left">tf-idf(word 1)&lt;/td>
+&lt;td style="text-align: left">tfidf(word 2)&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">&amp;hellip;&lt;/td>
+&lt;td style="text-align: left">tfidf(word &lt;em>n&lt;/em>)&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>It&amp;rsquo;s quite important to represent it as sparse matrix as it is otherwise quite bothersome to such a large matrix. Furthermore, it is largely filled with 0&amp;rsquo;s.&lt;/p>
+&lt;p>Then we can build a classifier based on the naive bayes framework.&lt;/p>
+&lt;p>$$
+P(y \mid x_1, \dots, x_n) \propto P(y) \prod_{i=1}^{n} P(x_i \mid y)
+$$
+$$
+\Downarrow
+$$
+$$
+\hat{y} = \argmax_y P(y) \prod_{i=1}^{n} P(x_i \mid y)
+$$&lt;/p>
+&lt;p>where&lt;/p>
+&lt;p>$$
+P(x_{i}|y) = \hat{\theta_{yi}} = \frac{N_{yi} + \alpha}{N_{y} + \alpha n}
+$$&lt;/p>
+&lt;h2 id="evaluation">Evaluation
+&lt;/h2>&lt;p>We can examine how the different methods stack up against each other&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/ham-or-spam/acc.png" width="60%">&lt;figcaption>
+&lt;h4>Accuracy of each method, including a few other baseline methods some of which use a simpler word vectorisation method, bag-of-words, of counting&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>So, we can build a relatively simple classifier that can obtain a &amp;gt;95% accuracy.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/ham-or-spam/percent.png" width="90%">&lt;figcaption>
+&lt;h4>It&amp;#39;s also interesting to examine which classes are most often classified wrongly and in which way. This figure shows this relationship&lt;/h4>
+&lt;/figcaption>
+&lt;/figure></description></item><item><title>Object recognition at different angles</title><link>https://andreaslh.github.io/CodedCognition/p/object-recognition-at-different-angles/</link><pubDate>Tue, 17 Sep 2019 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/object-recognition-at-different-angles/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/object-recognition-at-different-angles/angle%20experiment.png" alt="Featured image of post Object recognition at different angles" />&lt;p>This was the very first time I played around with an image classifier, just a week after starting my Bachelor&amp;rsquo;s degree in Artificial intelligence and Data. Back then I had no idea how the model actually worked, but accepted is as a black box.&lt;/p>
+&lt;p>Basically the experiment was to use an out-of-the box Resnet50 model to recognise a phone at different angles. Another purpose of the experiment was to get familiar with means and confidence intervals.&lt;/p>
+&lt;p>This was gathered in a table&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align: right">Angle (deg.)&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: center">&lt;/th>
+&lt;th style="text-align: right">Avg. (%)&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align: right">90&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">80&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">70&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">60&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">50&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">40&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">30&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">20&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: right">100&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">10&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: right">33.33&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: right">0&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">y&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: center">n&lt;/td>
+&lt;td style="text-align: right">16.7&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>We collected these results and found an average accuracy of 85% with a confidence interval [80.6%; 89.4%].&lt;/p>
+&lt;p>All this was as simple as the following code and some boilerplate to load the image&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="n">model&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">resnet50&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">ResNet50&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">weights&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;imagenet&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># load the image&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># ....&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">processed_image&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">resnet50&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">preprocess_input&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">expand_dims&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">frame&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">axis&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">predictions&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">model&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">predict&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">processed_image&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">label&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">resnet50&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">decode_predictions&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">predictions&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item></channel></rss>

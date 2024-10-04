@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Computer Vision on Coded Cognition // Andreas Lau Hansen</title><link>https://andreaslh.github.io/CodedCognition/tags/computer-vision/</link><description>Recent content in Computer Vision on Coded Cognition // Andreas Lau Hansen</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 05 Aug 2024 12:00:00 +0000</lastBuildDate><atom:link href="https://andreaslh.github.io/CodedCognition/tags/computer-vision/index.xml" rel="self" type="application/rss+xml"/><item><title>Weakly Supervised 3D Object Detection</title><link>https://andreaslh.github.io/CodedCognition/p/master/</link><pubDate>Mon, 05 Aug 2024 12:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/master/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/master/preds.png" alt="Featured image of post Weakly Supervised 3D Object Detection" />&lt;h1 id="introduction">Introduction
+&lt;/h1>&lt;p>2D object detection has for some time been quite successful put simply it can tell where in the image an object sits, which has many use cases. However to place an object in physical dimensions 3D object detection is needed. The figure below shows the natural extension.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/motivation.png" width="80%">&lt;figcaption>
+&lt;h4>Why 3D object detection is more useful. The squares in the rightmost figure are 1mx1m in size.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;h2 id="data-annotation-is-difficult">Data annotation is difficult
+&lt;/h2>&lt;p>However, one of the biggest challenges with 3D object detection is that large datasets are not widely available. This figure quite nicely illustrates one the reasons why that is - the data rougly takes 11x more time to annotate, and that is not counting how much more difficult it is to collect the data. Collection typically requires complicated setups with depth sensing cameras or whole room scanning.
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/annotation.png" width="80%">&lt;figcaption>
+&lt;h4>Annotation time motivation.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;p>This begs the question:
+&lt;strong>How to make a 3D object detection model using only 2D annotation boxes&lt;/strong>&lt;/p>
+&lt;p>So we&amp;rsquo;re not interested in making the best possible 3D object detector, but one that is efficient with its use of data. That is why we call it weakly supervised 3D object detection.&lt;/p>
+&lt;h2 id="the-problem-is-more-difficult">The problem is more difficult
+&lt;/h2>&lt;p>This project only concerns using a single camera, so-called monocular object detection. This makes this model much more accessible, as anyone with a simple camera for example a phone can use the model to generate predictions. An issue with this problem is that it makes the problem much more difficult, to determine the physical location of an object one requires at least 2 distinct view points. Without this, you have to resort to estimation.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/line.png" width="50%">&lt;figcaption>
+&lt;h4>A point in an image, corresponds to an infinite number of points in 3D.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>The figure shows how estimating the depth is the biggest challenge, because a large object far away visually appears the same size as a smaller object close by.&lt;/p>
+&lt;h1 id="approach-weak-cube-r-cnn">Approach: &amp;ldquo;Weak Cube R-CNN&amp;rdquo;
+&lt;/h1>&lt;p>We take heavy inspiration from another model &lt;a class="link" href="https://arxiv.org/abs/2207.10660" target="_blank" rel="noopener"
+>Cube R-CNN&lt;/a>, but remove all the components related to its 3D detection capability. As such what remains is essentially a Faster R-CNN model. Our model predicts 3D bounding boxes from the 2D predicted bounding boxes.&lt;/p>
+&lt;p>The crucial component is how to introduce depth sensing, since we do not have the 3D annotations anymore. To this end we use a depth estimation &amp;ldquo;Depth Anything&amp;rdquo; model tuned for metric depth estimation (estimating depth in meters), with this model you can effectively get a pseudo ground truth of the depth of the scene. The figure below shows how this might look for an image.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/depth_map.png" width="80%">&lt;figcaption>
+&lt;h4>Depth map.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>Interestingly, one can also interpret the depth map as a point-cloud by transforming it with simple math. This proves quite useful, because one can use it for other downstream tasks.
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/point_cloud_floor.png" width="60%">&lt;figcaption>
+&lt;h4>Point cloud generated from a depth map.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;p>When you have the point-cloud it is possible to estimate the ground plane. This is useful because the rotation, along with the depth, is one of the most important characteristics of getting high accuracy. Additionally, it utilises the frame of reference that is present in scenes. However, running a ground estimation algorithm on the point cloud directly is highly unstable, as there are typically other more dominant planes in a scene, like the walls. We overcome this by using a combination of the GroundingDINO and Segment Anything methods (middle image), this effectively filters the ground. Now you can run a simple plane-estimation RANSAC algorithm on the filtered point cloud, this turns out to be quite robust.
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/rotation.png" width="90%">&lt;figcaption>
+&lt;h4>How you can obtain a ground normal from the estimated point cloud.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;p>Based on all of these properties obtained from the scene, we build a variety of loss functions to optimise the model. A large overview of the whole model is shown.
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/model_arch-loss_vertical-3.svg" width="95%">&lt;figcaption>
+&lt;h4>Overview of the whole model&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;p>In total the whole optimisation objective for the 3D part of the model becomes:
+$$
+L_{3D} = L_{GIoU} + L_z + L_{dim} + L_{range} + L_{normal} + L_{pose}
+$$&lt;/p>
+&lt;p>So we have something for the positioning (first 2), the dimension (middle 2), and the rotation (last 2).
+These losses are clearly the most important part of the model. Additionally, each term is regularised by a $\lambda$.&lt;/p>
+&lt;h1 id="results">Results
+&lt;/h1>&lt;p>For reference to our method we also intially developed a &amp;ldquo;proposal method&amp;rdquo; based on the idea of proposing many cubes and selecting the best ones. The ideas generated when developing this method were carried over to our learnable &lt;em>Weak Cube R-CNN&lt;/em> method.&lt;/p>
+&lt;h2 id="metrics">Metrics
+&lt;/h2>&lt;p>The notable thing to report on the developed method, is that it achieves higher accuracy than a corresponding fully supervised but annotation time-equalised model.
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/result.png" width="90%">&lt;figcaption>
+&lt;h4>Results on the chosen metric Average precision 2D and 3D&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;p>The AP numbers might not look that impressive, but the following figure puts them into context. The AP3D metric is very punishing when just slightly off.
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/3diou.png" width="90%">&lt;figcaption>
+&lt;h4>Achieving a high 3D IoU is really hard.&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;h2 id="pictures">Pictures
+&lt;/h2>&lt;p>What we are here for!!
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/weak.png" width="95%">&lt;figcaption>
+&lt;h4>Results from the Weak-Cube R-CNN method&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/time-eq.png" width="95%">&lt;figcaption>
+&lt;h4>Results from the Annotation time equalised Cube R-CNN method&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/preds.png" width="95%">&lt;figcaption>
+&lt;h4>Results from the standard Cube R-CNN method&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;/p>
+&lt;h3 id="breaking-the-model">Breaking the model
+&lt;/h3>&lt;p>Just trying random stuff, that is really out of domain for the model to see what happens.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/master/fun.png" width="95%">&lt;figcaption>
+&lt;h4>Left: The model predicting wrongly on illusions. Right: When you provide a fake depth map of the same depth, it still looks correct from the front&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;h1 id="huggingface-demo">Huggingface demo
+&lt;/h1>&lt;p>If you want to try the model yourself, we are hosting a demo version on &lt;a class="link" href="https://huggingface.co/spaces/AndreasLH/Weakly-Supervised-3DOD" target="_blank" rel="noopener"
+>Huggingface&lt;/a>.&lt;/p>
+&lt;div style="text-align: center;">
+&lt;iframe
+src="https://andreaslh-weakly-supervised-3dod.hf.space"
+frameborder="0"
+width="90%"
+height="1400"
+>&lt;/iframe>
+&lt;/div></description></item></channel></rss>

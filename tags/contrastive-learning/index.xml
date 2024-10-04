@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Contrastive Learning on Coded Cognition // Andreas Lau Hansen</title><link>https://andreaslh.github.io/CodedCognition/tags/contrastive-learning/</link><description>Recent content in Contrastive Learning on Coded Cognition // Andreas Lau Hansen</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sun, 26 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://andreaslh.github.io/CodedCognition/tags/contrastive-learning/index.xml" rel="self" type="application/rss+xml"/><item><title>Image to recipe retrieval</title><link>https://andreaslh.github.io/CodedCognition/p/hello-world/</link><pubDate>Sun, 26 Nov 2023 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/hello-world/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/hello-world/cover2.png" alt="Featured image of post Image to recipe retrieval" />&lt;h1 id="motivation">Motivation
+&lt;/h1>&lt;p>I realised midways during this project that we had essentially just recreated the CLIP model.&lt;/p>
+&lt;h1 id="data">Data
+&lt;/h1>&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/data.png"
+width="1713"
+height="546"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/data_hu18030225312439565727.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/data_hu3721719520517867076.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="313"
+data-flex-basis="752px"
+>&lt;/p>
+&lt;h2 id="contrastive-learning">Contrastive learning
+&lt;/h2>&lt;h3 id="math">Math
+&lt;/h3>&lt;p>$$
+L_{bi} (a^{n=i}, b^{n=i}, b^{b\neq i}, a^{n\neq i}) = \frac{1}{B} \sum_{j=1}^B L^\prime_{bi}(i,j)\delta(i,j)
+$$&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/contrast.png"
+width="900"
+height="442"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/contrast_hu4121234433444749986.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/contrast_hu3149316029614551298.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="203"
+data-flex-basis="488px"
+> &lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/PCA.png"
+width="1015"
+height="829"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/PCA_hu274456097910932506.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/PCA_hu5569010005091693709.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="122"
+data-flex-basis="293px"
+>&lt;/p>
+&lt;h1 id="model">Model
+&lt;/h1>&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/model.png"
+width="1370"
+height="587"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/model_hu1529365347401631037.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/model_hu11883857552261529226.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="233"
+data-flex-basis="560px"
+>&lt;/p>
+&lt;h1 id="results">Results
+&lt;/h1>&lt;p>We can go both forwards and backwards between images and text.&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/results.png"
+width="1281"
+height="1121"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/results_hu12657805338290030343.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/results_hu3945010227499800399.png 1024w"
+loading="lazy"
+alt="Images and recipies"
+class="gallery-image"
+data-flex-grow="114"
+data-flex-basis="274px"
+>&lt;/p>
+&lt;h2 id="out-of-distribution-image">Out of distribution image
+&lt;/h2>&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/OOD.png"
+width="1547"
+height="159"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/OOD_hu6967952611363395337.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/hello-world/OOD_hu5742916082539157431.png 1024w"
+loading="lazy"
+alt="alt text"
+class="gallery-image"
+data-flex-grow="972"
+data-flex-basis="2335px"
+>&lt;/p></description></item></channel></rss>

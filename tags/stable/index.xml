@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Stable on Coded Cognition // Andreas Lau Hansen</title><link>https://andreaslh.github.io/CodedCognition/tags/stable/</link><description>Recent content in Stable on Coded Cognition // Andreas Lau Hansen</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 19 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://andreaslh.github.io/CodedCognition/tags/stable/index.xml" rel="self" type="application/rss+xml"/><item><title>MLOps for Butterfly image generation</title><link>https://andreaslh.github.io/CodedCognition/p/mlops-for-butterfly-image-generation/</link><pubDate>Thu, 19 Jan 2023 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/mlops-for-butterfly-image-generation/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/mlops-for-butterfly-image-generation/api_generations.png" alt="Featured image of post MLOps for Butterfly image generation" />&lt;p>This was mostly about learning the whole MLOps pipeline, to train, push monitor and so on, the machine learning life cycle.&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/mlops-for-butterfly-image-generation/system_b_transparent.png"
+width="1322"
+height="589"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/mlops-for-butterfly-image-generation/system_b_transparent_hu14645926661266403856.png 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/mlops-for-butterfly-image-generation/system_b_transparent_hu16085903344503391603.png 1024w"
+loading="lazy"
+alt="The pipeline"
+class="gallery-image"
+data-flex-grow="224"
+data-flex-basis="538px"
+>&lt;/p></description></item></channel></rss>

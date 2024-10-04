@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>HPC on Coded Cognition // Andreas Lau Hansen</title><link>https://andreaslh.github.io/CodedCognition/categories/hpc/</link><description>Recent content in HPC on Coded Cognition // Andreas Lau Hansen</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 15 Jan 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://andreaslh.github.io/CodedCognition/categories/hpc/index.xml" rel="self" type="application/rss+xml"/><item><title>Efficient use of computation</title><link>https://andreaslh.github.io/CodedCognition/p/efficient-use-of-computation/</link><pubDate>Mon, 15 Jan 2024 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/efficient-use-of-computation/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/efficient-use-of-computation/cpu.png" alt="Featured image of post Efficient use of computation" />&lt;h2 id="cpu">CPU
+&lt;/h2>&lt;p>Efficient computation and hardware utilisation underpins most of the methods used in deep learning learning applications.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/efficient-use-of-computation/cpu.png" width="60%">&lt;figcaption>
+&lt;h4>Different implementations of matrix multiplication on cpu&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/efficient-use-of-computation/mkn.png" width="60%">&lt;figcaption>
+&lt;h4>Why it is faster to access in the mkn pattern&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;h3 id="making-things-faster-multithreading">Making things faster: multithreading
+&lt;/h3>&lt;p>For this, we are chaning the problem to model the heat spread in a room&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/efficient-use-of-computation/room.png" width="60%">&lt;figcaption>
+&lt;h4>Room shown at different times&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>Now we can utilise all the cores in the machine to make the simulation go a lot faster.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/efficient-use-of-computation/jacobi.png" width="60%">&lt;figcaption>
+&lt;h4>Performance when using multiple cores, measured in Mega lattice updates/s&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;h2 id="making-things-even-faster-using-a-gpu">Making things even faster: using a gpu
+&lt;/h2>&lt;p>The idea of using blocking is to allow each thread to work on more than one element of the C matrix before being released. This might improve performance, because the overhead of assigning new threads to calculate each element is higher than assigning new work to each thread.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/efficient-use-of-computation/gpu.png" width="60%">&lt;figcaption>
+&lt;h4>Different implementations of matrix multiplication on cpu&lt;/h4>
+&lt;/figcaption>
+&lt;/figure></description></item></channel></rss>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Markov Chain on Coded Cognition // Andreas Lau Hansen</title><link>https://andreaslh.github.io/CodedCognition/tags/markov-chain/</link><description>Recent content in Markov Chain on Coded Cognition // Andreas Lau Hansen</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 07 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://andreaslh.github.io/CodedCognition/tags/markov-chain/index.xml" rel="self" type="application/rss+xml"/><item><title>Route Planning for self driving cars</title><link>https://andreaslh.github.io/CodedCognition/p/route-planning-for-self-driving-cars/</link><pubDate>Fri, 07 May 2021 00:00:00 +0000</pubDate><guid>https://andreaslh.github.io/CodedCognition/p/route-planning-for-self-driving-cars/</guid><description>&lt;img src="https://andreaslh.github.io/CodedCognition/p/route-planning-for-self-driving-cars/car.png" alt="Featured image of post Route Planning for self driving cars" />&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/route-planning-for-self-driving-cars/car.png" width="60%">&lt;figcaption>
+&lt;h4>Snapshot of the environment, we are driving the green car&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>Model the environment as a time to collision matrix.&lt;/p>
+&lt;figure>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/route-planning-for-self-driving-cars/TTC.png" width="60%">&lt;figcaption>
+&lt;h4>Time to collision (TTC) matrix&lt;/h4>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>5 available actions A(s), which are: {0: ‘LANE_LEFT’, 1: ‘IDLE’, 2: ‘LANE_RIGHT’, 3: ‘FASTER’, 4: ‘SLOWER’}&lt;/p>
+&lt;p>&lt;img src="https://andreaslh.github.io/CodedCognition/CodedCognition/p/route-planning-for-self-driving-cars/car%20driving.gif"
+width="864"
+height="504"
+srcset="https://andreaslh.github.io/CodedCognition/CodedCognition/p/route-planning-for-self-driving-cars/car%20driving_hu2102085749756944050.gif 480w, https://andreaslh.github.io/CodedCognition/CodedCognition/p/route-planning-for-self-driving-cars/car%20driving_hu9572495506577776478.gif 1024w"
+loading="lazy"
+alt="Value function when the car is driving"
+class="gallery-image"
+data-flex-grow="171"
+data-flex-basis="411px"
+>&lt;/p></description></item></channel></rss>
