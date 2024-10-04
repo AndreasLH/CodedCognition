@@ -5,7 +5,7 @@ slug: hello-world
 date: 2023-11-26
 image: cover2.png
 categories:
-    - Special course
+    - Multi-modal
 tags:
     - CLIP
     - Contrastive learning
@@ -14,7 +14,8 @@ math: true
 ---
 
 # Motivation
-hello
+
+I realised midways during this project that we had essentially just recreated the CLIP model.
 
 # Data
 ![alt text](data.png)
